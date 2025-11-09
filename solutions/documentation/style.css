@@ -1,0 +1,186 @@
+/* Importing Fonts */
+@import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
+
+/* Variables */
+:root {
+  --font: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  --padding: 15px;
+  --transition-duration: 150ms;
+  --transition-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --header-height: 100px;
+  --sidebar-width: 300px;
+  --content-height: calc(100vh - var(--header-height) - var(--padding) * 3);
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-nm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /*
+     Colours
+     iOS Colours: https://developer.apple.com/design/human-interface-guidelines/color#iOS-iPadOS-system-colors
+     Dark Theme
+  */
+  --accent-col: #99ff99;
+  
+  --gray0: rgb(28, 28, 30);
+  --gray1: rgb(44, 44, 46);
+  --gray2: rgb(58, 58, 60);
+  --gray3: rgb(72, 72, 74);
+  --gray4: rgb(99, 99, 102);
+  --gray5: rgb(142, 142, 147);
+  
+  --text-col: #f0f0f0;
+  --heading-col: white;
+  
+  /* Light Theme */
+  @media (prefers-color-scheme: light) {
+    --gray0: rgb(242, 242, 247);
+    --gray1: rgb(229, 229, 234);
+    --gray2: rgb(209, 209, 214);
+    --gray3: rgb(199, 199, 204);
+    --gray4: rgb(174, 174, 178);
+    --gray5: rgb(142, 142, 147);
+    
+    --text-col: #0f0f0f;
+    --heading-col: black;
+  }
+}
+
+/* Common Styles */
+*,
+:before,
+:after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: normal;
+  color: var(--text-col);
+  -webkit-tap-highlight-color: transparent;
+  
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-function);
+  transition-property: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  color: var(--heading-col);
+}
+h1 {
+  font-size: 2rem
+}
+h2 {
+  font-size: 1.8rem
+}
+h3 {
+  font-size: 1.6rem
+}
+h4 {
+  font-size: 1.4rem
+}
+h5 {
+  font-size: 1.2rem
+}
+/* <p> and <h6> are both 1rem */
+
+/* Main Page */
+html, body, :root, #root {
+  color-scheme: light dark;
+  scroll-behavior: smooth;
+  background-color: var(--gray-0);
+  min-height: 100vh;
+  min-width: 100vw;
+
+  body {
+    padding: var(--padding);
+  }
+}
+
+/* Common CSS to Main Elements */
+#top,
+#side-nav,
+#doc-content {
+  background-color: var(--gray1);
+  box-shadow: var(--shadow-md);
+
+  padding: var(--padding);
+  border-radius: var(--padding);
+}
+
+/* Top Bar */
+#top {
+  margin-bottom: var(--padding);
+  height: var(--header-height);
+}
+
+/* Side Bar */
+#side-nav {
+  width: var(--sidebar-width);
+  height: var(--content-height);
+
+  position: static;
+}
+
+/* Main Content */
+#doc-content {
+  width: var(--sidebar-width);
+  height: var(--content-height);
+}
+
+/* Footer */
+#nav-path {
+  display: none;
+}
+
+/* TODO: links, and buttons
+a:not(.button)
+  color: --blue
+
+  &:visited
+    color: --purple
+
+  &:hover
+    color: --indigo
+
+button, a.button
+  @include button
+
+@mixin glass
+  background-color: --surface-col
+  background: radial-gradient(circle at top right, mix(--gray2, --surface-col, 50%) 0%, --surface-col 30%)
+  box-shadow: --shadow-lg
+
+  border-radius: 10px
+  --border: solid 2px --gray3
+  border-top: --border
+  border-right: --border
+  border-bottom: none
+  border-left: none
+
+@mixin button
+  display: inline-block
+  background-color: --element-col
+  text-decoration: none
+  padding: 0.5em 1em
+  box-shadow: --shadow-sm
+  cursor: pointer
+  
+  border-radius: 1000em
+  border: solid 2px --gray3
+
+  &:hover
+    background-color: --highlight-col
+    box-shadow: --shadow-nm
+    border-color: lighten(--accent-col, 10%)
+
+  &:active
+    border-color: lighten(--accent-col, 20%)
+    background-color: lighten(--accent-col, 5%)
+*/
