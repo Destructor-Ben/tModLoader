@@ -515,13 +515,162 @@ public partial class Main
 		base.Content = new TMLContentManager(Content.ServiceProvider, vanillaContentFolder, localOverrideContentManager);
 	}
 	
-	private static void DrawtModLoaderSocialMediaButtons(Microsoft.Xna.Framework.Color menuColor, float upBump)
+	private static void DrawtModLoaderSocialMediaButtons(Color menuColor, float upBump)
 	{
 		List<TitleLinkButton> titleLinks = tModLoaderTitleLinks;
-		Vector2 anchorPosition = new Vector2(18f, (float)(screenHeight - 26 - 22) - upBump);
+		Vector2 anchorPosition = new Vector2(18f, (float)(screenHeight - 26) - upBump);
 		for (int i = 0; i < titleLinks.Count; i++) {
 			titleLinks[i].Draw(spriteBatch, anchorPosition);
 			anchorPosition.X += 30f;
+		}
+	}
+
+	private static void DrawtModLoaderMenuText(Color menuColor, ref float upBump)
+	{
+		DrawMenuText(ModLoader.ModLoader.versionedName, 0, 0);
+		
+		/*
+
+		string supportMessage = Language.GetTextValue("tModLoader.PatreonSupport");
+		string patreonShortURL = @"patreon.com/tModLoader";
+		bool showPatreon = SocialAPI.Mode != SocialMode.Steam;
+
+		// Show number of mods - 1 such as to show number of enabled mods that are not tModLoader itself
+		string modsMessage = Language.GetTextValue("tModLoader.MenuModsEnabled", Math.Max(0, ModLoader.ModLoader.Mods.Length - 1));
+		
+		//TODO: FUTURE
+		//if (ModLoader.Core.GOGModUpdateChecker.ModUpdatesAvailable > 0) {
+		//	modsMessage += " " + Language.GetTextValue("tModLoader.MenuModUpdatesAvailable", ModLoader.Core.GOGModUpdateChecker.ModUpdatesAvailable);
+		//}
+
+		/*
+		string text = versionNumber;
+		*
+		string text = ModLoader.ModLoader.versionedName + (showPatreon ? Environment.NewLine + supportMessage : "") + (menuMode == 0 ? Environment.NewLine : "") + Environment.NewLine + "Terraria " + versionNumber;
+		Vector2 origin = FontAssets.MouseText.Value.MeasureString(text);
+		origin.X *= 0.5f;
+		origin.Y *= 0.5f;
+		for (int i = 0; i < 5; i++) {
+			Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.Black;
+			if (i == 4) {
+				color = menuColor;
+				color.R = (byte)((255 + color.R) / 2);
+				color.G = (byte)((255 + color.R) / 2);
+				color.B = (byte)((255 + color.R) / 2);
+			}
+
+			color.A = (byte)((float)(int)color.A * 0.3f);
+			int num = 0;
+			int num2 = 0;
+			if (i == 0)
+				num = -2;
+
+			if (i == 1)
+				num = 2;
+
+			if (i == 2)
+				num2 = -2;
+
+			if (i == 3)
+				num2 = 2;
+
+			spriteBatch.DrawString(FontAssets.MouseText.Value, text, new Vector2(origin.X + (float)num + 10f, (float)screenHeight - origin.Y + (float)num2 - 2f - upBump), color, 0f, origin, 1f, SpriteEffects.None, 0f);
+
+			// Developer mode button.
+			if (menuMode == 0 /*&& !ModCompile.DeveloperMode/) {
+				string developerModeText = Language.GetTextValue("tModLoader.SwitchVersionInfoButton");
+
+				// measure and draw text from bottom right
+				var textSize = FontAssets.MouseText.Value.MeasureString(developerModeText);
+				var pos = new Vector2(screenWidth - 10f + num, screenHeight - 2f + num2);
+				var d_color = color;
+
+				float scale = 1.2f;
+
+				// final draw
+				if (i == 4) {
+					var rect = new Rectangle((int)(pos.X - textSize.X * scale), (int)(pos.Y - textSize.Y * scale), (int)(textSize.X * scale), (int)(textSize.Y * scale));
+					bool mouseover = rect.Contains(mouseX, mouseY);
+					d_color = mouseover ? highVersionColor : d_color;
+
+					if (mouseover && mouseLeftRelease && mouseLeft) {
+						SoundEngine.PlaySound(SoundID.MenuOpen);
+						Utils.OpenToURL("https://github.com/tModLoader/tModLoader/wiki/tModLoader-guide-for-players#beta-branches");
+					}
+				}
+
+				spriteBatch.DrawString(FontAssets.MouseText.Value, developerModeText, pos, d_color, 0f, textSize, 1.2f, SpriteEffects.None, 0f);
+			}
+
+			// TML Patreon.
+			if (showPatreon) {
+				var font = FontAssets.MouseText.Value;
+				var patreonOrigin = font.MeasureString(supportMessage);
+				Vector2 urlSize = font.MeasureString(patreonShortURL);
+
+				spriteBatch.DrawString(font, patreonShortURL, new Vector2(patreonOrigin.X + num + 10f, screenHeight - patreonOrigin.Y + num2 - 2f - (int)upBump), color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+
+				if (i == 4 && mouseLeftRelease && mouseLeft && new Microsoft.Xna.Framework.Rectangle((int)patreonOrigin.X + 10, screenHeight - (int)urlSize.Y - 2 - (int)upBump, (int)urlSize.X, (int)patreonOrigin.Y).Contains(new Microsoft.Xna.Framework.Point(mouseX, mouseY)) && hasFocus) {
+					SoundEngine.PlaySound(SoundID.MenuOpen);
+					Utils.OpenToURL("https://www.patreon.com/tModLoader");
+				}
+			}
+
+			// ModPack
+			if (ModOrganizer.ModPackActive != null) {
+				var font = FontAssets.MouseText.Value;
+				string modpackText = Language.GetTextValue("tModLoader.CurrentModPack", Path.GetFileNameWithoutExtension(ModOrganizer.ModPackActive));
+				var packOrigin = font.MeasureString(modpackText);
+
+				spriteBatch.DrawString(font, modpackText, new Vector2(packOrigin.X + num + 10f, screenHeight - packOrigin.Y + num2 - 2f - (int)upBump), color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			}
+		}
+
+		// End of DrawVersionNumber
+		HandleNews(menuColor);
+
+		//*/
+
+		// Copied from Main.DrawVersionNumber
+		void DrawMenuText(string text, int left, int top, Color? textColorOverride = null, Color? textShadowColorOverride = null)
+		{
+			Vector2 origin = FontAssets.MouseText.Value.MeasureString(text);
+			origin.X *= 0.5f;
+			origin.Y *= 0.5f;
+			for (int i = 0; i < 5; i++) {
+				Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.Black;
+
+				if (textShadowColorOverride is not null)
+					color = textShadowColorOverride.Value;
+
+				if (i == 4) {
+					color = menuColor;
+					color.R = (byte)((255 + color.R) / 2);
+					color.G = (byte)((255 + color.G) / 2);
+					color.B = (byte)((255 + color.B) / 2);
+
+					if (textColorOverride is not null)
+						color = textColorOverride.Value;
+				}
+
+				color.A = (byte)((float)(int)color.A * 0.3f);
+
+				int num = 0;
+				int num2 = 0;
+				if (i == 0)
+					num = -2;
+
+				if (i == 1)
+					num = 2;
+
+				if (i == 2)
+					num2 = -2;
+
+				if (i == 3)
+					num2 = 2;
+
+				spriteBatch.DrawString(FontAssets.MouseText.Value, text, new Vector2(origin.X + num + left, origin.Y + num2 + top), color, 0f, origin, 1f, SpriteEffects.None, 0f);
+			}
 		}
 	}
 
