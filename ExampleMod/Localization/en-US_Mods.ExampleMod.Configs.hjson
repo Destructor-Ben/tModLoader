@@ -559,6 +559,15 @@ SimpleData: {
 	}
 }
 
+Simple: {
+	Tooltip: ""
+
+	simpleBool: {
+		Label: default true
+		Tooltip: ""
+	}
+}
+
 Gradient: {
 	Tooltip: Represents a gradient from one color to another
 
@@ -706,3 +715,149 @@ ModConfigShowcaseAcceptClientChanges: {
 		Tooltip: ""
 	}
 }
+
+DefaultValueConfig: {
+	DisplayName: DefaultValue with Reference Types
+
+	simple: {
+		Label: simple
+		Tooltip: ""
+	}
+
+	someBool: {
+		Label: default true
+		Tooltip: ""
+	}
+
+	simplePage: {
+		Label: simple Page
+		Tooltip: ""
+	}
+
+	boolWrapper: {
+		Label: bool Wrapper
+		Tooltip: ""
+	}
+
+	simpleWrapper: {
+		Label: simple Wrapper
+		Tooltip: ""
+	}
+}
+
+BoolWrapper.Tooltip: ""
+
+BoolWrapperAbstract: {
+	boolWrapped: {
+		Label: default true
+		Tooltip: ""
+	}
+}
+
+SimpleWrapper.Tooltip: ""
+
+DictWrapperConfig: {
+	DisplayName: Dicts and Wrappers
+
+	integerDict: {
+		Label: integer Dict
+		Tooltip: ""
+	}
+
+	integerDictWrapper: {
+		Label: integer Dict Wrapper
+		Tooltip: ""
+	}
+}
+
+DictWrapperPrimitive.Tooltip: ""
+
+DictWrapperAbstract`2: {
+	Dict: {
+		Label: Dict
+		Tooltip: ""
+	}
+}
+
+InheritanceConfig: {
+	DisplayName: Inheritance
+
+	parent: {
+		Label: parent
+		Tooltip: ""
+	}
+
+	child: {
+		Label: child
+		Tooltip: ""
+	}
+}
+
+Parent: {
+	Tooltip: ""
+
+	first: {
+		Label: first
+		Tooltip: ""
+	}
+
+	second: {
+		Label: second
+		Tooltip: ""
+	}
+
+	third: {
+		Label: third
+		Tooltip: ""
+	}
+
+	FirstEnabledNoIgnore: {
+		Label: First Enabled No Ignore
+		Tooltip: ""
+	}
+}
+
+Child: {
+	Tooltip: ""
+
+	fourth: {
+		Label: fourth
+		Tooltip: ""
+	}
+
+	fifth: {
+		Label: fifth
+		Tooltip: ""
+	}
+}
+
+JsonIgnoreGetConfig: {
+	DisplayName: JsonIgnore and Labels
+
+	TimeInt: {
+		Label: TimeInt
+		Tooltip: ""
+	}
+
+	TimeIntIgnore: {
+		Label: TimeIntIgnore
+		Tooltip: ""
+	}
+
+	TimeIntNoLabel: {
+		Label: Time Int No Label
+		Tooltip: ""
+	}
+
+	TimeString: {
+		Label: TimeString
+		Tooltip: ""
+	}
+
+	TimeStringIgnore: {
+		Label: TimeStringIgnore
+		Tooltip: ""
+	}
+}
+
+TestConfig.DisplayName: Test Config
