@@ -2,6 +2,10 @@ using System;
 using System.Linq;
 using System.Reflection;
 
+// TODO: BEN
+// - Fix the hot reload assembly attribute thingy
+// - add rider icon
+
 namespace Terraria.ModLoader;
 
 public static class BuildInfo
@@ -10,10 +14,10 @@ public static class BuildInfo
 	{
 		Dev, // Personal Builds
 		Preview, // Monthly preview builds from CI that modders develop against for compatibility
-		Stable // The 'stable' builds from CI that players are expected to play on. 
+		Stable // The 'stable' builds from CI that players are expected to play on.
 	}
 
-	public static readonly string BuildIdentifier = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+	public static readonly string BuildIdentifier = "1.4.4.9+9999.0|0.0|Fix-UI-Scrollbar-Hover|dev|156f1f4d0d6ea5a17ec9e42a604b1bed914" + "fbeb0|5250620110393914709";//Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
 	public static readonly Version tMLVersion;
 	/// <summary>The Major.Minor version of the stable release at the time this build was created.</summary>
