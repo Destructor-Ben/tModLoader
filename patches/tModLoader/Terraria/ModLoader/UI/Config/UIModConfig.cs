@@ -1,26 +1,25 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Timers;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using ReLogic.Content;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.ID;
-using Terraria.ModLoader.UI;
+using Terraria.Localization;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 using Terraria.UI.Gamepad;
-using Terraria.Localization;
-using tModPorter;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
+
+// TODO: go through all of the config elements, find all of the UIElements that they created specifically for their use (e.g. NestedUIList) and move them to a proper namespace and make them public
 
 // TODO: Revert individual button.
 // TODO: Collapse All button, or default to collapsed?

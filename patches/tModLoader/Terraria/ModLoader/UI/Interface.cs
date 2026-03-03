@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader.Config.UI;
 using Terraria.ModLoader.Core;
 using Terraria.ModLoader.UI;
 using Terraria.ModLoader.UI.DownloadManager;
@@ -25,6 +24,7 @@ using System.Collections.Generic;
 using Microsoft.Build.Framework;
 using Terraria.UI.Chat;
 using Microsoft.Xna.Framework;
+using Terraria.ModLoader.UI.Config;
 using Terraria.Social.Base;
 
 namespace Terraria.ModLoader.UI;

@@ -1,14 +1,15 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Default;
 using Terraria.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class ItemDefinitionElement : DefinitionElement<ItemDefinition>
 {

@@ -1,14 +1,14 @@
-using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal interface IDictionaryElementWrapper
 {

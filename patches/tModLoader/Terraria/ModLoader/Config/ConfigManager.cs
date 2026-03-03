@@ -10,10 +10,10 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader.Config.UI;
 using Terraria.ModLoader.Core;
 using Terraria.ModLoader.Exceptions;
 using Terraria.ModLoader.UI;
+using Terraria.ModLoader.UI.Config;
 using Terraria.UI;
 
 namespace Terraria.ModLoader.Config;

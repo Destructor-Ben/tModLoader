@@ -5,8 +5,8 @@ using Newtonsoft.Json;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader.Config.UI;
 using Terraria.ModLoader.UI;
+using Terraria.ModLoader.UI.Config;
 using Terraria.UI;
 
 namespace Terraria.ModLoader.Config;

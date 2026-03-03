@@ -2,12 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Terraria.GameContent.UI.Elements;
-using Terraria.GameInput;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class ListElement : CollectionElement
 {

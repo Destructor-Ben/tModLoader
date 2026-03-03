@@ -7,6 +7,7 @@ using Terraria.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.UI;
+using Terraria.ModLoader.UI.Config;
 using Terraria.Utilities;
 
 namespace Terraria.GameContent.UI.States;
@@ -19,7 +20,7 @@ partial class UIWorldSelect
 
 	// Individual
 	private static UIExpandablePanel _migrationPanel;
-	private static ModLoader.Config.UI.NestedUIList migrateWorldList;
+	private static NestedUIList migrateWorldList;
 	private static bool migratableWorldsLoaded = false;
 
 	private void InitializeMigrationPanel()
@@ -32,7 +33,7 @@ partial class UIWorldSelect
 		playerMigrationPanelTitle.Top.Set(4, 0);
 		_migrationPanel.Append(playerMigrationPanelTitle);
 
-		migrateWorldList = new ModLoader.Config.UI.NestedUIList();
+		migrateWorldList = new NestedUIList();
 		migrateWorldList.Width.Set(-22, 1f);
 		migrateWorldList.Left.Set(0, 0f);
 		migrateWorldList.Top.Set(30, 0);

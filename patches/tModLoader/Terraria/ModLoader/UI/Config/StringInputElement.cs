@@ -1,8 +1,7 @@
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class StringInputElement : ConfigElement<string>
 {

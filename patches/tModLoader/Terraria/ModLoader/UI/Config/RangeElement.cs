@@ -1,12 +1,13 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using Terraria.GameInput;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 public abstract class PrimitiveRangeElement<T> : RangeElement where T : IComparable<T>
 {

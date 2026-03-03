@@ -4,7 +4,7 @@ using ReLogic.Content;
 using Terraria.GameContent;
 using Terraria.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class BooleanElement : ConfigElement<bool>
 {

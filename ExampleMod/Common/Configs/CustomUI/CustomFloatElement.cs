@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader.Config.UI;
+using Terraria.ModLoader.UI.Config;
 
 // ATTENTION: Below this point is custom config UI element.
 // Be aware that mods using custom config elements will break with the next few tModLoader updates until their design is finalized.

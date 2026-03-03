@@ -7,6 +7,7 @@ using Terraria.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.UI;
+using Terraria.ModLoader.UI.Config;
 using Terraria.UI;
 using Terraria.Utilities;
 
@@ -20,7 +21,7 @@ public partial class UICharacterSelect : UIState
 
 	// Individual
 	private static UIExpandablePanel _migrationPanel;
-	private static ModLoader.Config.UI.NestedUIList migratePlayerList;
+	private static NestedUIList migratePlayerList;
 	private static bool migratablePlayersLoaded = false;
 
 	private void InitializeMigrationPanel()
@@ -32,7 +33,7 @@ public partial class UICharacterSelect : UIState
 		playerMigrationPanelTitle.Top.Set(4, 0);
 		_migrationPanel.Append(playerMigrationPanelTitle);
 
-		migratePlayerList = new ModLoader.Config.UI.NestedUIList();
+		migratePlayerList = new NestedUIList();
 		migratePlayerList.Width.Set(-22, 1f);
 		migratePlayerList.Left.Set(0, 0f);
 		migratePlayerList.Top.Set(30, 0);

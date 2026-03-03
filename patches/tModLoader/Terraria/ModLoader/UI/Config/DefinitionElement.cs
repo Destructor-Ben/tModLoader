@@ -1,17 +1,17 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.UI.Elements;
 using Terraria.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal abstract class DefinitionElement<T> : ConfigElement<T> where T : EntityDefinition
 {

@@ -1,13 +1,12 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Terraria.GameContent;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class Vector2Element : ConfigElement
 {

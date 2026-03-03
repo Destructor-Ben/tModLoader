@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class StringOptionElement : RangeElement
 {

@@ -1,9 +1,9 @@
 using System;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class EnumElement : RangeElement
 {

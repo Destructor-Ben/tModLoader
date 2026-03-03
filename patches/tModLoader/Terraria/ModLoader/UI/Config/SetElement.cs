@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal interface ISetElementWrapper
 {

@@ -5,7 +5,7 @@
  using Terraria.Initializers;
  using Terraria.Localization;
 +using Terraria.ModLoader;
-+using Terraria.ModLoader.Config.UI;
++using Terraria.ModLoader.UI.Config;
  using Terraria.UI;
  using Terraria.UI.Gamepad;
  

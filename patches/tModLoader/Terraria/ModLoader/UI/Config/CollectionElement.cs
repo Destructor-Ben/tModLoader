@@ -1,17 +1,15 @@
+using System;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal abstract class CollectionElement : ConfigElement
 {

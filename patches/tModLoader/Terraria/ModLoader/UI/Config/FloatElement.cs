@@ -1,6 +1,6 @@
 using System;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 public class FloatElement : PrimitiveRangeElement<float>
 {

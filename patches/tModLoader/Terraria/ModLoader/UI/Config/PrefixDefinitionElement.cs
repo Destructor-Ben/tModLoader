@@ -1,10 +1,10 @@
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria.ID;
-using Terraria.ModLoader.UI;
+using Terraria.ModLoader.Config;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.UI.Config;
 
 internal class PrefixDefinitionElement : DefinitionElement<PrefixDefinition>
 {

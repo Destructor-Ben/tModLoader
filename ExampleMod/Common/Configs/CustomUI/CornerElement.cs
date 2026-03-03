@@ -6,7 +6,7 @@ using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader.Config;
-using Terraria.ModLoader.Config.UI;
+using Terraria.ModLoader.UI.Config;
 using Terraria.UI;
 
 // ATTENTION: Below this point is custom config UI element.

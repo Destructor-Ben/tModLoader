@@ -1,9 +1,8 @@
 using System;
 using System.Reflection;
 
-namespace Terraria.ModLoader.Config.UI;
+namespace Terraria.ModLoader.Config;
 
-// TODO: move to Terraria.ModLoader.Config
 public class PropertyFieldWrapper
 {
 	private readonly FieldInfo fieldInfo;
