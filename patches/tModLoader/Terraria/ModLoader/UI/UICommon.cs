@@ -152,11 +152,11 @@ public static class UICommon
 			=> ModLoader.ManifestAssets.Request<Texture2D>($"Terraria.ModLoader.{name}");
 
 		ButtonErrorTexture = LoadEmbeddedTexture("UI.ButtonError");
-		//ButtonConfigTexture = LoadEmbeddedTexture("Config.UI.ButtonConfig");
-		ButtonPlusTexture = LoadEmbeddedTexture("Config.UI.ButtonPlus");
-		ButtonUpDownTexture = LoadEmbeddedTexture("Config.UI.ButtonUpDown");
-		ButtonCollapsedTexture = LoadEmbeddedTexture("Config.UI.ButtonCollapsed");
-		ButtonExpandedTexture = LoadEmbeddedTexture("Config.UI.ButtonExpanded");
+		//ButtonConfigTexture = LoadEmbeddedTexture("UI.Config.ButtonConfig");
+		ButtonPlusTexture = LoadEmbeddedTexture("UI.Config.ButtonPlus");
+		ButtonUpDownTexture = LoadEmbeddedTexture("UI.Config.ButtonUpDown");
+		ButtonCollapsedTexture = LoadEmbeddedTexture("UI.Config.ButtonCollapsed");
+		ButtonExpandedTexture = LoadEmbeddedTexture("UI.Config.ButtonExpanded");
 		ModBrowserIconsTexture = LoadEmbeddedTexture("UI.UIModBrowserIcons");
 		UIAchievementsMenuIconsTexture = LoadEmbeddedTexture("UI.UIAchievementsMenuIcons");
 		ConfigSideIndicatorTexture = LoadEmbeddedTexture("UI.ConfigSideIndicator");
