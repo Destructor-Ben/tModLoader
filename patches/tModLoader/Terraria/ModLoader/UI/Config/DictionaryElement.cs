@@ -82,6 +82,8 @@ internal class UIModConfigDictionaryElementWrapperWrapper
 }
 */
 
+/*
+
 internal class DictionaryElement : CollectionElement
 {
 	internal Type keyType;
@@ -243,3 +245,5 @@ internal class DictionaryElement : CollectionElement
 		}
 	}
 }
+
+*/

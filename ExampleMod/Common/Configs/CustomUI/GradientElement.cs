@@ -18,6 +18,7 @@ namespace ExampleMod.Common.Configs.CustomUI
 	// This custom config UI element uses vanilla config elements paired with custom drawing.
 	class GradientElement : ConfigElement
 	{
+		/*
 		public override void OnBind() {
 			base.OnBind();
 
@@ -60,5 +61,6 @@ namespace ExampleMod.Common.Configs.CustomUI
 				//Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(hitbox.X + 3 * hitbox.Width / 4, hitbox.Y, hitbox.Width / 4, 30), g.end);
 			}
 		}
+		*/
 	}
 }

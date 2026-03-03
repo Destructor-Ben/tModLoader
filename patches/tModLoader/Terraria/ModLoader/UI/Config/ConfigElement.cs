@@ -13,19 +13,25 @@ namespace Terraria.ModLoader.UI.Config;
 
 public abstract class ConfigElement<T> : ConfigElement
 {
-	protected virtual T Value {
-		get => (T)GetObject();
-		set => SetObject(value);
+	protected new T Value {
+		get => (T)base.Value;
+		set => base.Value = value;
 	}
 }
 
 public abstract class ConfigElement : UIElement
 {
+	public ConfigField Field { get; private set; }
+	public ModConfig Config => Field.Config;
+
+	public object Value {
+		get => Field.Value;
+		set => Field.Value = value;
+	}
+
 	public const float DefaultHeight = 30;
 
 	private Color backgroundColor; // TODO inherit parent object color?
-
-	public int Index { get; set; }
 
 	public const int flashRate = 120;
 	public bool Flashing { get; set; }
@@ -39,12 +45,6 @@ public abstract class ConfigElement : UIElement
 	protected Asset<Texture2D> CollapsedTexture { get; set; } = UICommon.ButtonCollapsedTexture;
 	protected Asset<Texture2D> ExpandedTexture { get; set; } = UICommon.ButtonExpandedTexture;
 
-	// Provides access to the field/property contained in the item
-	protected internal PropertyFieldWrapper MemberInfo { get; set; }
-	// The object that contains the memberInfo. This is usually a ModConfig instance or an object instance contained within a ModConfig instance.
-	protected internal object Item { get; set; }
-	// If non-null, the memberInfo actually refers to the collection containing this item and array and index need to be used to assign this data
-	protected internal IList List { get; set; }
 	// Attributes
 	protected LabelKeyAttribute LabelAttribute;
 	protected string Label;
@@ -60,8 +60,10 @@ public abstract class ConfigElement : UIElement
 	protected bool DrawLabel { get; set; } = true;
 	protected bool ReloadRequired { get; set; }
 	protected bool ShowReloadRequiredTooltip { get; set; }
+
+	// TODO: move to config field?
 	protected object OldValue { get; set; }
-	protected bool ValueChanged => !ConfigManager.ObjectEquals(OldValue, GetObject());
+	protected bool ValueChanged => !ConfigManager.ObjectEquals(OldValue, Value);
 
 	public ConfigElement()
 	{
@@ -70,72 +72,46 @@ public abstract class ConfigElement : UIElement
 	}
 
 	/// <summary>
-	/// Bind must always be called after the ctor and serves to facilitate a convenient inheritance workflow for custom ConfigElemets from mods.
+	/// Bind must always be called after the ctor and serves to facilitate a convenient inheritance workflow for custom ConfigElements from mods.
 	/// </summary>
-	public void Bind(PropertyFieldWrapper memberInfo, object item, IList array, int index)
+	public void Bind(ConfigField field)
 	{
-		MemberInfo = memberInfo;
-		Item = item;
-		List = array;
-		Index = index;
-		backgroundColor = UICommon.DefaultUIBlue;
+		Field = field;
+		OnBind();
 	}
 
 	public virtual void OnBind()
 	{
-		LabelAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<LabelKeyAttribute>(MemberInfo, Item, List);
-		Label = ConfigManager.GetLocalizedLabel(MemberInfo);
+		LabelAttribute = Field.GetAttribute<LabelKeyAttribute>();
+		Label = ConfigManager.GetLocalizedLabel(Field.MemberInfo);
 		// Potential TODO if highly requested: Support interpolating value itself into label.
 		TextDisplayFunction = () => Label;
 
-		TooltipAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<TooltipKeyAttribute>(MemberInfo, Item, List);
-		string tooltip = ConfigManager.GetLocalizedTooltip(MemberInfo);
+		TooltipAttribute = Field.GetAttribute<TooltipKeyAttribute>();
+		string tooltip = ConfigManager.GetLocalizedTooltip(Field.MemberInfo);
 		if (tooltip != null) {
 			TooltipFunction = () => tooltip;
 		}
 
-		BackgroundColorAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<BackgroundColorAttribute>(MemberInfo, Item, List);
+		BackgroundColorAttribute = Field.GetAttribute<BackgroundColorAttribute>();
 
 		if (BackgroundColorAttribute != null) {
 			backgroundColor = BackgroundColorAttribute.Color;
 		}
 
-		RangeAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<RangeAttribute>(MemberInfo, Item, List);
-		IncrementAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<IncrementAttribute>(MemberInfo, Item, List);
-		NullAllowed = ConfigManager.GetCustomAttributeFromMemberThenMemberType<NullAllowedAttribute>(MemberInfo, Item, List) != null;
-		JsonDefaultValueAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<JsonDefaultValueAttribute>(MemberInfo, Item, List);
-		ShowReloadRequiredTooltip = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ReloadRequiredAttribute>(MemberInfo, Item, List) != null;
+		RangeAttribute = Field.GetAttribute<RangeAttribute>();
+		IncrementAttribute = Field.GetAttribute<IncrementAttribute>();
+		NullAllowed = Field.GetAttribute<NullAllowedAttribute>() != null;
+		JsonDefaultValueAttribute = Field.GetAttribute<JsonDefaultValueAttribute>();
+		ShowReloadRequiredTooltip = Field.GetAttribute<ReloadRequiredAttribute>() != null;
 
-		if (ShowReloadRequiredTooltip && List == null && Item is ModConfig modConfig) {
+		if (ShowReloadRequiredTooltip && Field.Parent is null) {
 			// Default ModConfig.NeedsReload logic currently only checks members of the ModConfig class, this mirrors that logic.
 			ReloadRequired = true;
 			// We need to check against the value in the load time config, not the value at the time of binding.
-			ModConfig loadTimeConfig = ConfigManager.GetLoadTimeConfig(modConfig.Mod, modConfig.Name);
-			OldValue = MemberInfo.GetValue(loadTimeConfig);
+			ModConfig loadTimeConfig = ConfigManager.GetLoadTimeConfig(Config.Mod, Config.Name);
+			OldValue = Field.MemberInfo.GetValue(loadTimeConfig);
 		 }
-	}
-
-	protected virtual void SetObject(object value)
-	{
-		if (List != null) {
-			List[Index] = value;
-			Interface.modConfig.OnConfigModified();
-			return;
-		}
-
-		if (!MemberInfo.CanWrite)
-			return;
-
-		MemberInfo.SetValue(Item, value);
-		Interface.modConfig.OnConfigModified();
-	}
-
-	protected virtual object GetObject()
-	{
-		if (List != null)
-			return List[Index];
-
-		return MemberInfo.GetValue(Item);
 	}
 
 	/// <summary>
@@ -153,7 +129,7 @@ public abstract class ConfigElement : UIElement
 		Vector2 baseScale = new Vector2(0.8f);
 		Color color = IsMouseHovering ? Color.White : Color.White;
 
-		if (!MemberInfo.CanWrite)
+		if (!Field.MemberInfo.CanWrite)
 			color = Color.Gray;
 
 		//color = Color.Lerp(color, Color.White, base.IsMouseHovering ? 1f : 0f);

@@ -460,20 +460,6 @@ public static class ConfigManager
 			(T?)Attribute.GetCustomAttribute(elementType, typeof(T), true); // on a provided fallback type
 	}
 
-	public static Tuple<UIElement, UIElement> WrapIt(UIElement parent, ref int top, PropertyFieldWrapper memberInfo, object item, int order, object? list = null, Type? arrayType = null, int index = -1)
-	{
-		// public api for modders.
-		return UIModConfig.WrapIt(parent, ref top, memberInfo, item, order, list, arrayType, index);
-	}
-
-	// TODO: remove in future, it is no longer needed, since ModConfig is public
-	public static void SetPendingChanges(bool changes = true)
-	{
-		// public api for modders.
-		if (changes)
-			Interface.modConfig.OnConfigModified();
-	}
-
 	// TODO: better home?
 	public static bool ObjectEquals(object? a, object? b)
 	{

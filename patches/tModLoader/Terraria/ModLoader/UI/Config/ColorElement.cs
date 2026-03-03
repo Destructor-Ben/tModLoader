@@ -8,6 +8,8 @@ using Terraria.UI;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
+
 internal class ColorElement : ConfigElement
 {
 	private class ColorObject
@@ -198,3 +200,5 @@ internal class ColorElement : ConfigElement
 		return height;
 	}
 }
+
+*/

@@ -20,12 +20,12 @@ public abstract class PrimitiveRangeElement<T> : RangeElement where T : ICompara
 	{
 		base.OnBind();
 
-		TList = (IList<T>)List;
-		TextDisplayFunction = () => MemberInfo.Name + ": " + GetValue();
+		//TList = (IList<T>)List;
+		TextDisplayFunction = () => Field.MemberInfo.Name + ": " + GetValue();
 
-		if (TList != null) {
+		/* TODO: Fix if (TList != null) {
 			TextDisplayFunction = () => Index + 1 + ": " + TList[Index];
-		}
+		}*/
 
 		if (Label != null) { // Problem with Lists using ModConfig Label.
 			TextDisplayFunction = () => Label + ": " + GetValue();
@@ -40,12 +40,12 @@ public abstract class PrimitiveRangeElement<T> : RangeElement where T : ICompara
 		}
 	}
 
-	protected virtual T GetValue() => (T)GetObject();
+	protected virtual T GetValue() => (T)Value;
 
 	protected virtual void SetValue(object value)
 	{
 		if (value is T t)
-			SetObject(Utils.Clamp(t, Min, Max));
+			Value = (Utils.Clamp(t, Min, Max));
 	}
 }
 
@@ -73,8 +73,8 @@ public abstract class RangeElement : ConfigElement
 	{
 		base.OnBind();
 
-		DrawTicks = Attribute.IsDefined(MemberInfo.MemberInfo, typeof(DrawTicksAttribute));
-		SliderColor = ConfigManager.GetCustomAttributeFromMemberThenMemberType<SliderColorAttribute>(MemberInfo, Item, List)?.Color ?? Color.White;
+		DrawTicks = Attribute.IsDefined(Field.MemberInfo.MemberInfo, typeof(DrawTicksAttribute));
+		SliderColor = Field.GetAttribute<SliderColorAttribute>()?.Color ?? Color.White;
 	}
 
 	public float DrawValueBar(SpriteBatch sb, float scale, float perc, int lockState = 0, Utils.ColorLerpMethod colorMethod = null)

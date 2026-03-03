@@ -7,6 +7,7 @@ using Terraria.Localization;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
 internal class IntInputElement : ConfigElement
 {
 	public IList<int> IntList { get; set; }
@@ -20,7 +21,7 @@ internal class IntInputElement : ConfigElement
 	{
 		base.OnBind();
 
-		IntList = (IList<int>)List;
+		// TODO: add back IntList = (IList<int>)List;
 
 		if (IntList != null) {
 			TextDisplayFunction = () => Index + 1 + ": " + IntList[Index];
@@ -318,3 +319,4 @@ internal class ByteElement : PrimitiveRangeElement<byte>
 		Increment = 1;
 	}
 }
+*/

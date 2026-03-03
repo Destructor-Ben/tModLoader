@@ -40,20 +40,20 @@ internal class EnumElement2 : ConfigElement
 	public override void OnBind()
 	{
 		base.OnBind();
-		valueStrings = Enum.GetNames(MemberInfo.Type);
+		valueStrings = Enum.GetNames(Field.MemberInfo.Type);
 		max = valueStrings.Length;
 		tooltips = new string[max];
 
-		if (ConfigManager.GetCustomAttributeFromMemberThenMemberType<DropdownAttribute>(MemberInfo, Item, List) != null) {
+		if (Field.GetAttribute<DropdownAttribute>() != null) {
 			DropDown = true;
 		}
-		else if (ConfigManager.GetCustomAttributeFromMemberThenMemberType<CycleAttribute>(MemberInfo, Item, List) != null) {
+		else if (Field.GetAttribute<CycleAttribute>() != null) {
 			Cycle = true;
 		}
 
 		// Retrieve individual Enum member labels
 		for (int i = 0; i < max; i++) {
-			var enumFieldFieldInfo = MemberInfo.Type.GetField(valueStrings[i]);
+			var enumFieldFieldInfo = Field.MemberInfo.Type.GetField(valueStrings[i]);
 			if (enumFieldFieldInfo != null) {
 				string name = ConfigManager.GetLocalizedLabel(new PropertyFieldWrapper(enumFieldFieldInfo));
 				valueStrings[i] = name;
@@ -242,21 +242,21 @@ internal class EnumElement2 : ConfigElement
 
 	private void DefaultSetValue(int index)
 	{
-		if (!MemberInfo.CanWrite)
+		if (!Field.MemberInfo.CanWrite)
 			return;
 
-		MemberInfo.SetValue(Item, Enum.GetValues(MemberInfo.Type).GetValue(index));
+		Field.Value = Enum.GetValues(Field.MemberInfo.Type).GetValue(index);
 		Interface.modConfig.OnConfigModified();
 	}
 
 	private object DefaultGetValue()
 	{
-		return MemberInfo.GetValue(Item);
+		return Field.Value;
 	}
 
 	private int DefaultGetIndex()
 	{
-		return Array.IndexOf(Enum.GetValues(MemberInfo.Type), _getValue());
+		return Array.IndexOf(Enum.GetValues(Field.MemberInfo.Type), _getValue());
 	}
 
 	private string DefaultGetStringValue()

@@ -8,6 +8,8 @@ using Terraria.UI;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
+
 internal class ListElement : CollectionElement
 {
 	private Type listType;
@@ -57,6 +59,8 @@ internal class ListElement : CollectionElement
 		}
 	}
 }
+
+*/
 
 internal class NestedUIList : UIList
 {

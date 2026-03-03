@@ -29,9 +29,9 @@ internal abstract class DefinitionElement<T> : ConfigElement<T> where T : Entity
 	{
 		base.OnBind();
 		TextDisplayFunction = () => Label + ": " + OptionChoice.Tooltip;
-		if (List != null) {
+		/* TODO: fix if (List != null) {
 			TextDisplayFunction = () => Index + 1 + ": " + OptionChoice.Tooltip;
-		}
+		}*/
 
 		Height.Set(30f, 0f);
 

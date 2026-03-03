@@ -11,6 +11,8 @@ using Terraria.UI;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
+
 internal abstract class CollectionElement : ConfigElement
 {
 	private UIModConfigHoverImage initializeButton;
@@ -260,3 +262,5 @@ internal abstract class CollectionElement : ConfigElement
 		}
 	}
 }
+
+*/

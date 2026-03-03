@@ -5,6 +5,8 @@ using Terraria.ModLoader.Config;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
+
 internal class EnumElement : RangeElement
 {
 	private Func<object> _getValue;
@@ -57,7 +59,7 @@ internal class EnumElement : RangeElement
 			_SetValue = (int valueIndex) => { array[index] = (Enum)Enum.GetValues(memberInfo.Type).GetValue(valueIndex); Interface.modConfig.SetPendingChanges(); };
 			_TextDisplayFunction = () => index + 1 + ": " + _GetValueString();
 		}
-		*/
+		* /
 
 		if (Label != null) {
 			TextDisplayFunction = () => Label + ": " + _getValueString();
@@ -100,3 +102,5 @@ internal class EnumElement : RangeElement
 		}
 	}
 }
+
+*/

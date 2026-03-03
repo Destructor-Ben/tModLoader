@@ -2,6 +2,8 @@ using System;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
+
 internal class ArrayElement : CollectionElement
 {
 	private Type itemType;
@@ -47,3 +49,5 @@ internal class ArrayElement : CollectionElement
 		}
 	}
 }
+
+*/

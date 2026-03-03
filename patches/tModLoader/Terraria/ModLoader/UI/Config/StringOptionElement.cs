@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Terraria.ModLoader.Config;
 
 namespace Terraria.ModLoader.UI.Config;
-
+/*
 internal class StringOptionElement : RangeElement
 {
 	private Func<string> getValue;
@@ -66,3 +66,4 @@ internal class StringOptionElement : RangeElement
 		return Array.IndexOf(options, getValue());
 	}
 }
+*/

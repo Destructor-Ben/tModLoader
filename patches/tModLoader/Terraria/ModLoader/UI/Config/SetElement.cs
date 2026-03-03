@@ -6,7 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader.Config;
 
 namespace Terraria.ModLoader.UI.Config;
-
+/*
 internal interface ISetElementWrapper
 {
 	object Value { get; }
@@ -43,7 +43,7 @@ internal class SetElementWrapper<V> : ISetElementWrapper
 				_value = value;
 				set.Add(_value, _value);
 			}
-			*/
+			* /
 		}
 	}
 
@@ -129,3 +129,5 @@ internal class SetElement : CollectionElement
 		}
 	}
 }
+
+*/

@@ -30,6 +30,7 @@ namespace ExampleMod.Common.Configs.CustomUI
 
 	class CornerElement : ConfigElement
 	{
+		/*
 		Texture2D circleTexture;
 		string[] valueStrings;
 
@@ -67,5 +68,6 @@ namespace ExampleMod.Common.Configs.CustomUI
 			var circlePositionOffset = new Vector2((int)corner % 2 * 8, (int)corner / 2 * 8);
 			spriteBatch.Draw(circleTexture, new Vector2(dimensions.X + dimensions.Width - 25, dimensions.Y + 4) + circlePositionOffset, circleSourceRectangle, Color.White);
 		}
+		*/
 	}
 }

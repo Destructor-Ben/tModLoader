@@ -45,7 +45,7 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 	private ModConfig pendingConfig; // The clone we modify, so we can revert changes easily
 
 	// TODO: refactor these fields
-	private readonly List<Tuple<UIElement, UIElement>> configElements = new();
+	private readonly List<UIElement> configElements = [];
 	private BlockInputElement blockInput;
 	private UIElement activeDialog;
 	private readonly Stack<UIPanel> configPanelStack = new();
@@ -206,6 +206,7 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 			Height = { Pixels = -listHeaderContainer.Height.Pixels - 5, Percent = 1f },
 			VAlign = 1f,
 			ListPadding = 5f,
+			ManualSortMethod = (list) => { }, // Elements added in order, no need to sort.
 		};
 		uiPanel.Append(configElementList);
 
@@ -391,11 +392,8 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 		refreshQueued = false;
 
 		// Refresh all of the config elements
-		// TODO: unfortunately, because of how ConfigElements currently handle changing values and because of reference types
-		// - nested elements require manual handling to make UI refresh on revert/restore
-		// - in future, this should be much easier, since things like the Item (the parent) won't be stored, and will instead be getters, based on a parent ConfigElement
 		foreach (var listItem in configElements) {
-			if (listItem.Item2 is ConfigElement configElement) {
+			if (listItem is ConfigElement configElement) {
 				configElement.RefreshUI();
 			}
 		}
@@ -403,12 +401,12 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 		// Populate the config list
 		configElementList.Clear();
 		configElementList.AddRange(configElements.Where(item => {
-			if (item.Item2 is ConfigElement configElement) {
+			if (item is ConfigElement configElement) {
 				// TODO: instead of using TextDisplayFunction, allow elements to define a "search string" so they can include things like sub-members and tooltips in their search info
 				return configElement.TextDisplayFunction().Contains(filterTextField.CurrentString, StringComparison.OrdinalIgnoreCase);
 			}
 			return true;
-		}).Select(x => x.Item1));
+		}));
 
 		// Set panel color
 		// TODO: in future, this should be done via hooks here rather than attributes
@@ -437,11 +435,11 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 			}
 			// Potential future support: ModConfigShowcaseDataTypes@SomeClassA/Header:enabled, ModConfigShowcaseDataTypes@SomeList/3, ModConfigShowcaseMisc@collapsedList
 			var desiredElement = configElementList._items.Find(x => {
-				if (x is UISortableElement sortableElement && sortableElement.Children.FirstOrDefault() is ConfigElement configElement && configElement.MemberInfo.Name == scrollToOption) {
-					if (configElement is ObjectElement objectElement && objectElement.separatePagePanel != null) {
+				if (x is UISortableElement sortableElement && sortableElement.Children.FirstOrDefault() is ConfigElement configElement && configElement.Field.MemberInfo.Name == scrollToOption) {
+					/* TODO: fix if (configElement is ObjectElement objectElement && objectElement.separatePagePanel != null) {
 						SwitchToSubConfig(objectElement.separatePagePanel);
 						return true;
-					}
+					}*/
 					configElement.Flashing = true;
 					return true;
 				}
@@ -513,16 +511,8 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 		}
 
 		// Setup the config elements
-		int top = 0;
-		int order = 0;
-		// ReSharper disable once LoopCanBePartlyConvertedToQuery
-		foreach (PropertyFieldWrapper variable in ConfigManager.GetFieldsAndProperties(pendingConfig)) {
-			if (Attribute.IsDefined(variable.MemberInfo, typeof(JsonIgnoreAttribute)) && !Attribute.IsDefined(variable.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute)))
-				continue;
-
-			HandleHeader(configElementList, ref top, ref order, variable);
-			WrapIt(configElementList, ref top, variable, pendingConfig, order++);
-		}
+		configElements.Clear();
+		configElements.AddRange(ConfigElementHandler.GetConfigElements(pendingConfig));
 
 		RefreshUI(delayRefresh: false);
 		CheckSaveAndRestoreConditions();
@@ -532,208 +522,8 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 
 	// TODO: refactor all of the below
 
-	#region ConfigElement Handling
-
-	public static Tuple<UIElement, UIElement> WrapIt(UIElement parent, ref int top, PropertyFieldWrapper memberInfo, object item, int order, object list = null, Type arrayType = null, int index = -1)
-	{
-		int elementHeight;
-		Type type = memberInfo.Type;
-
-		if (arrayType != null) {
-			type = arrayType;
-		}
-
-		UIElement e;
-
-		// TODO: Other common structs? -- Rectangle, Point
-		var customUI = ConfigManager.GetCustomAttributeFromMemberThenMemberType<CustomModConfigItemAttribute>(memberInfo, null, null);
-
-		if (customUI != null) {
-			Type customUIType = customUI.Type;
-
-			if (typeof(ConfigElement).IsAssignableFrom(customUIType)) {
-				ConstructorInfo ctor = customUIType.GetConstructor(Array.Empty<Type>());
-
-				if (ctor != null) {
-					object instance = ctor.Invoke(new object[0]);
-					e = instance as UIElement;
-				}
-				else {
-					e = new UIText($"{customUIType.Name} specified via CustomModConfigItem for {memberInfo.Name} does not have an empty constructor.");
-				}
-			}
-			else {
-				e = new UIText($"{customUIType.Name} specified via CustomModConfigItem for {memberInfo.Name} does not inherit from ConfigElement.");
-			}
-		}
-		else if (item.GetType() == typeof(HeaderAttribute)) {
-			// TODO: blend with the panel color that the config specifies
-			e = new UIHeaderElement((string)memberInfo.GetValue(item), UIHeaderElement.BlendColor(UICommon.DefaultUIBlue));
-		}
-		else if (type == typeof(ItemDefinition)) {
-			e = new ItemDefinitionElement();
-		}
-		else if (type == typeof(ProjectileDefinition)) {
-			e = new ProjectileDefinitionElement();
-		}
-		else if (type == typeof(NPCDefinition)) {
-			e = new NPCDefinitionElement();
-		}
-		else if (type == typeof(PrefixDefinition)) {
-			e = new PrefixDefinitionElement();
-		}
-		else if (type == typeof(BuffDefinition)) {
-			e = new BuffDefinitionElement();
-		}
-		else if (type == typeof(TileDefinition)) {
-			e = new TileDefinitionElement();
-		}
-		else if (type == typeof(Color)) {
-			e = new ColorElement();
-		}
-		else if (type == typeof(Vector2)) {
-			e = new Vector2Element();
-		}
-		else if (type == typeof(bool)) // isassignedfrom?
-		{
-			e = new BooleanElement();
-		}
-		else if (type == typeof(float)) {
-			e = new FloatElement();
-		}
-		else if (type == typeof(byte)) {
-			e = new ByteElement();
-		}
-		else if (type == typeof(uint)) {
-			e = new UIntElement();
-		}
-		else if (type == typeof(int)) {
-			SliderAttribute sliderAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<SliderAttribute>(memberInfo, item, list);
-
-			if (sliderAttribute != null)
-				e = new IntRangeElement();
-			else
-				e = new IntInputElement();
-		}
-		else if (type == typeof(string)) {
-			OptionStringsAttribute ost = ConfigManager.GetCustomAttributeFromMemberThenMemberType<OptionStringsAttribute>(memberInfo, item, list);
-			if (ost != null)
-				e = new StringOptionElement();
-			else
-				e = new StringInputElement();
-		}
-		else if (type == typeof(long)) {
-			e = new LongElement();
-		}
-		else if (type == typeof(ulong)) {
-			e = new ULongElement();
-		}
-		else if (type.IsEnum) {
-			if (list != null)
-				e = new UIText($"{memberInfo.Name} not handled yet ({type.Name}).");
-			else {
-				SliderAttribute sliderAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<SliderAttribute>(memberInfo, item, list);
-				bool useNewElements = (Interface.modConfig == null || Interface.modConfig.mod.TModLoaderVersion.MajorMinor() >= new Version(2025, 9)) && sliderAttribute == null;
-				if (useNewElements)
-					e = new EnumElement2();
-				else
-					e = new EnumElement();
-			}
-		}
-		else if (type.IsArray) {
-			e = new ArrayElement();
-		}
-		else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)) {
-			e = new ListElement();
-		}
-		else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(HashSet<>)) {
-			e = new SetElement();
-		}
-		else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)) {
-			e = new DictionaryElement();
-		}
-		else if (type == typeof(object)) {
-			e = new UIText($"{memberInfo.Name} can't be of the Type Object.");
-		}
-		else if (type.IsClass) {
-			e = new ObjectElement(/*, ignoreSeparatePage: ignoreSeparatePage*/);
-		}
-		else if (type.IsValueType && !type.IsPrimitive) {
-			e = new UIText($"{memberInfo.Name} not handled yet ({type.Name}) Structs need special UI.");
-			//e.Top.Pixels += 6;
-			e.Height.Pixels += 6;
-			e.Left.Pixels += 4;
-
-			//object subitem = memberInfo.GetValue(item);
-		}
-		else {
-			e = new UIText($"{memberInfo.Name} not handled yet ({type.Name})");
-			e.Top.Pixels += 6;
-			e.Left.Pixels += 4;
-		}
-
-		if (e != null) {
-			if (e is ConfigElement configElement) {
-				configElement.Bind(memberInfo, item, (IList)list, index);
-				configElement.OnBind();
-			}
-
-			e.Recalculate();
-
-			elementHeight = (int)e.GetOuterDimensions().Height;
-
-			var container = GetContainer(e, index == -1 ? order : index);
-			container.Height.Pixels = elementHeight;
-
-			if (parent is UIList uiList) {
-				uiList.Add(container);
-				uiList.GetTotalHeight();
-			}
-			else {
-				// Only Vector2 and Color use this I think, but modders can use the non-UIList approach for custom UI and layout.
-				container.Top.Pixels = top;
-				container.Width.Pixels = -20;
-				container.Left.Pixels = 20;
-				top += elementHeight + 4;
-				parent.Append(container);
-				parent.Height.Set(top, 0);
-			}
-
-			var tuple = new Tuple<UIElement, UIElement>(container, e);
-
-			if (parent == Interface.modConfig.configElementList) {
-				Interface.modConfig.configElements.Add(tuple);
-			}
-
-			return tuple;
-		}
-		return null;
-	}
-
-	internal static UIElement GetContainer(UIElement containee, int sortid)
-	{
-		UIElement container = new UISortableElement(sortid);
-		container.Width.Set(0f, 1f);
-		container.Height.Set(30f, 0f);
-		//container.HAlign = 1f;
-		container.Append(containee);
-		return container;
-	}
-
-	public static void HandleHeader(UIElement parent, ref int top, ref int order, PropertyFieldWrapper variable)
-	{
-		HeaderAttribute header = ConfigManager.GetLocalizedHeader(variable.MemberInfo);
-
-		if (header != null) {
-			var wrapper = new PropertyFieldWrapper(typeof(HeaderAttribute).GetProperty(nameof(HeaderAttribute.Header)));
-			WrapIt(parent, ref top, wrapper, header, order++);
-		}
-	}
-
-	#endregion
-
 	#region Sub Configs
-
+/*
 	internal static UIPanel MakeSeparateListPanel(object item, object subitem, PropertyFieldWrapper memberInfo, IList array, int index, Func<string> AbridgedTextDisplayFunction)
 	{
 		UIPanel uIPanel = new UIPanel();
@@ -844,9 +634,9 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 				if (Attribute.IsDefined(variable.MemberInfo, typeof(JsonIgnoreAttribute)) && !Attribute.IsDefined(variable.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute)))
 					continue;
 
-				HandleHeader(separateList, ref top, ref order, variable);
+				//HandleHeader(separateList, ref top, ref order, variable);
 
-				WrapIt(separateList, ref top, variable, subitem, order++);
+				//WrapIt(separateList, ref top, variable, subitem, order++);
 			}
 		}
 		else {
@@ -857,7 +647,7 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 		Interface.modConfig.subPageStack.Pop();
 		return uIPanel;
 	}
-
+*/
 	internal static void SwitchToSubConfig(UIPanel separateListPanel)
 	{
 		// Interface.modConfig.uiElement.RemoveChild(Interface.modConfig.configPanelStack.Peek());

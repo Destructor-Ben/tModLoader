@@ -13,6 +13,8 @@ using Terraria.UI;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
+
 internal class ObjectElement : ConfigElement<object>
 {
 	protected Func<string> AbridgedTextDisplayFunction { get; set; }
@@ -79,7 +81,7 @@ internal class ObjectElement : ConfigElement<object>
 
 			JsonConvert.PopulateObject(json, data, ConfigManager.serializerSettings);
 
-			Value = data;*/
+			Value = data;* /
 		}
 
 		separatePage = ConfigManager.GetCustomAttributeFromMemberThenMemberType<SeparatePageAttribute>(MemberInfo, Item, List) != null;
@@ -97,7 +99,7 @@ internal class ObjectElement : ConfigElement<object>
 				UIModConfig.SwitchToSubConfig(this.separatePagePanel);
 				/*	Interface.modConfig.uIElement.RemoveChild(Interface.modConfig.configPanelStack.Peek());
 					Interface.modConfig.uIElement.Append(separateListPanel);
-					Interface.modConfig.configPanelStack.Push(separateListPanel);*/
+					Interface.modConfig.configPanelStack.Push(separateListPanel);* /
 				//separateListPanel.SetScrollbar(Interface.modConfig.uIScrollbar);
 
 				//UIPanel panel = new UIPanel();
@@ -343,7 +345,7 @@ internal class UIModConfigHoverImage : UIImage
 		}
 	}
 }
-
+*/
 internal class UIModConfigHoverImageSplit : UIImage
 {
 	internal string HoverTextUp;

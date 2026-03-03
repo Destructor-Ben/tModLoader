@@ -8,6 +8,8 @@ using Terraria.UI;
 
 namespace Terraria.ModLoader.UI.Config;
 
+/*
+
 internal class Vector2Element : ConfigElement
 {
 	private class Vector2Object
@@ -171,3 +173,5 @@ internal class Vector2Element : ConfigElement
 		return height;
 	}
 }
+
+*/
