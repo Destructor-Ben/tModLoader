@@ -21,6 +21,8 @@ public abstract class ConfigElement<T> : ConfigElement
 
 public abstract class ConfigElement : UIElement
 {
+	public const float DefaultHeight = 30;
+
 	private Color backgroundColor; // TODO inherit parent object color?
 
 	public int Index { get; set; }
@@ -64,7 +66,7 @@ public abstract class ConfigElement : UIElement
 	public ConfigElement()
 	{
 		Width.Set(0f, 1f);
-		Height.Set(30f, 0f);
+		Height.Set(DefaultHeight, 0f);
 	}
 
 	/// <summary>
@@ -213,32 +215,5 @@ public abstract class ConfigElement : UIElement
 
 		spriteBatch.Draw(texture, position + new Vector2(2, 2), new Rectangle(2, 2, 1, 1), color, 0, Vector2.Zero, new Vector2(width - 4, (height - 4) / 2), SpriteEffects.None, 0f);
 		spriteBatch.Draw(texture, position + new Vector2(2, 2 + ((height - 4) / 2)), new Rectangle(2, 16, 1, 1), color, 0, Vector2.Zero, new Vector2(width - 4, (height - 4) / 2), SpriteEffects.None, 0f);
-	}
-}
-
-// TODO: remember, this is used in the controls menu too
-internal class HeaderElement : UIElement
-{
-	private readonly string header;
-
-	public HeaderElement(string header)
-	{
-		this.header = header;
-		Vector2 size = ChatManager.GetStringSize(FontAssets.ItemStack.Value, this.header, Vector2.One, 532); // TODO: Max Width can't be known at this time.
-		Width.Set(0f, 1f);
-		Height.Set(size.Y + 6, 0f);
-	}
-
-	protected override void DrawSelf(SpriteBatch spriteBatch)
-	{
-		base.DrawSelf(spriteBatch);
-
-		CalculatedStyle dimensions = base.GetDimensions();
-		float settingsWidth = dimensions.Width + 1f;
-		Vector2 position = new Vector2(dimensions.X, dimensions.Y) + new Vector2(8);
-
-		spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)dimensions.X + 10, (int)dimensions.Y + (int)dimensions.Height - 2, (int)dimensions.Width - 20, 1), Color.LightGray);
-
-		ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, header, position, Color.White, 0f, Vector2.Zero, new Vector2(1f), settingsWidth - 20, 2f);
 	}
 }

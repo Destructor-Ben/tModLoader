@@ -451,7 +451,7 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 			if (header) {
 				int index = configElementList._items.IndexOf(desiredElement);
 				for (int i = index - 1; i >= 0; i--) {
-					if (configElementList._items[i] is UISortableElement sortableElement && sortableElement.Children.FirstOrDefault() is HeaderElement headerElement) {
+					if (configElementList._items[i] is UISortableElement sortableElement && sortableElement.Children.FirstOrDefault() is UIHeaderElement headerElement) {
 						desiredElement = sortableElement;
 						break;
 					}
@@ -567,7 +567,8 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 			}
 		}
 		else if (item.GetType() == typeof(HeaderAttribute)) {
-			e = new HeaderElement((string)memberInfo.GetValue(item));
+			// TODO: blend with the panel color that the config specifies
+			e = new UIHeaderElement((string)memberInfo.GetValue(item), UIHeaderElement.BlendColor(UICommon.DefaultUIBlue));
 		}
 		else if (type == typeof(ItemDefinition)) {
 			e = new ItemDefinitionElement();
