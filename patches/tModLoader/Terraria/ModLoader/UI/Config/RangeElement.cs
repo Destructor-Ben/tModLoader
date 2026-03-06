@@ -21,14 +21,14 @@ public abstract class PrimitiveRangeElement<T> : RangeElement where T : ICompara
 		base.OnBind();
 
 		//TList = (IList<T>)List;
-		TextDisplayFunction = () => Field.MemberInfo.Name + ": " + GetValue();
+		LabelFunction = () => Field.MemberInfo.Name + ": " + GetValue();
 
 		/* TODO: Fix if (TList != null) {
 			TextDisplayFunction = () => Index + 1 + ": " + TList[Index];
 		}*/
 
 		if (Label != null) { // Problem with Lists using ModConfig Label.
-			TextDisplayFunction = () => Label + ": " + GetValue();
+			LabelFunction = () => Label + ": " + GetValue();
 		}
 
 		if (RangeAttribute != null && RangeAttribute.Min is T && RangeAttribute.Max is T) {

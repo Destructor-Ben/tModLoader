@@ -1,23 +1,20 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
 using Terraria.Localization;
 
 namespace Terraria.ModLoader.UI.Config;
 
-public class PlaceholderElement(LocalizedText message, params string[] args) : ConfigElement
+public class PlaceholderElement : ConfigElement
 {
-	private LocalizedText message = message;
-	private string[] args = args;
+	public LocalizedText Label;
+	public object[] LabelArgs;
 
-	// TODO: just modify the text display function
+	public LocalizedText Tooltip;
+	public object[] TooltipArgs;
 
-	protected override void DrawSelf(SpriteBatch spriteBatch)
+	public override void OnBind()
 	{
-		base.DrawSelf(spriteBatch);
+		base.OnBind();
 
-		// TODO: temp
-		var dimensions = GetDimensions();
-		spriteBatch.Draw(TextureAssets.MagicPixel.Value, dimensions.ToRectangle(), Color.Red);
+		LabelFunction = () => Label?.Format(LabelArgs ?? []);
+		TooltipFunction = () => Tooltip?.Format(TooltipArgs ?? []);
 	}
 }

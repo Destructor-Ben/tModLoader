@@ -403,7 +403,7 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 		configElementList.AddRange(configElements.Where(item => {
 			if (item is ConfigElement configElement) {
 				// TODO: instead of using TextDisplayFunction, allow elements to define a "search string" so they can include things like sub-members and tooltips in their search info
-				return configElement.TextDisplayFunction().Contains(filterTextField.CurrentString, StringComparison.OrdinalIgnoreCase);
+				return configElement.LabelFunction().Contains(filterTextField.CurrentString, StringComparison.OrdinalIgnoreCase);
 			}
 			return true;
 		}));

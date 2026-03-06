@@ -31,7 +31,7 @@ public abstract class ConfigElement : UIElement
 
 	public const float DefaultHeight = 30;
 
-	private Color backgroundColor; // TODO inherit parent object color?
+	private Color backgroundColor = UICommon.DefaultUIBlue; // TODO inherit parent object color?
 
 	public const int flashRate = 120;
 	public bool Flashing { get; set; }
@@ -55,9 +55,8 @@ public abstract class ConfigElement : UIElement
 	protected JsonDefaultValueAttribute JsonDefaultValueAttribute;
 	// Etc
 	protected bool NullAllowed { get; set; }
-	protected internal Func<string> TextDisplayFunction { get; set; }
+	protected internal Func<string> LabelFunction { get; set; }
 	protected Func<string> TooltipFunction { get; set; }
-	protected bool DrawLabel { get; set; } = true;
 	protected bool ReloadRequired { get; set; }
 	protected bool ShowReloadRequiredTooltip { get; set; }
 
@@ -74,6 +73,7 @@ public abstract class ConfigElement : UIElement
 	/// <summary>
 	/// Bind must always be called after the ctor and serves to facilitate a convenient inheritance workflow for custom ConfigElements from mods.
 	/// </summary>
+	// TODO: add a parent field and param here, so we can inherit values from the parent UI element, such as bg color
 	public void Bind(ConfigField field)
 	{
 		Field = field;
@@ -85,7 +85,7 @@ public abstract class ConfigElement : UIElement
 		LabelAttribute = Field.GetAttribute<LabelKeyAttribute>();
 		Label = ConfigManager.GetLocalizedLabel(Field.MemberInfo);
 		// Potential TODO if highly requested: Support interpolating value itself into label.
-		TextDisplayFunction = () => Label;
+		LabelFunction = () => Label;
 
 		TooltipAttribute = Field.GetAttribute<TooltipKeyAttribute>();
 		string tooltip = ConfigManager.GetLocalizedTooltip(Field.MemberInfo);
@@ -105,12 +105,24 @@ public abstract class ConfigElement : UIElement
 		JsonDefaultValueAttribute = Field.GetAttribute<JsonDefaultValueAttribute>();
 		ShowReloadRequiredTooltip = Field.GetAttribute<ReloadRequiredAttribute>() != null;
 
+		// TODO - Add line for default value?
 		if (ShowReloadRequiredTooltip && Field.Parent is null) {
 			// Default ModConfig.NeedsReload logic currently only checks members of the ModConfig class, this mirrors that logic.
 			ReloadRequired = true;
 			// We need to check against the value in the load time config, not the value at the time of binding.
 			ModConfig loadTimeConfig = ConfigManager.GetLoadTimeConfig(Config.Mod, Config.Name);
 			OldValue = Field.MemberInfo.GetValue(loadTimeConfig);
+
+			TooltipFunction = () => {
+				string tt = tooltip;
+
+				if (ShowReloadRequiredTooltip) {
+					tt += string.IsNullOrEmpty(tt) ? "" : "\n";
+					tt += $"[c/{Color.Orange.Hex3()}:" + Language.GetTextValue("tModLoader.ModReloadRequiredMemberTooltip") + "]";
+				}
+
+				return tt;
+			};
 		 }
 	}
 
@@ -120,76 +132,101 @@ public abstract class ConfigElement : UIElement
 	/// </summary>
 	public virtual void RefreshUI() { }
 
-	protected override void DrawSelf(SpriteBatch spriteBatch)
-	{
-		base.DrawSelf(spriteBatch);
-		CalculatedStyle dimensions = base.GetDimensions();
-		float settingsWidth = dimensions.Width + 1f;
-		Vector2 vector = new Vector2(dimensions.X, dimensions.Y);
-		Vector2 baseScale = new Vector2(0.8f);
-		Color color = IsMouseHovering ? Color.White : Color.White;
-
-		if (!Field.MemberInfo.CanWrite)
-			color = Color.Gray;
-
-		//color = Color.Lerp(color, Color.White, base.IsMouseHovering ? 1f : 0f);
-		Color panelColor = base.IsMouseHovering ? backgroundColor : backgroundColor.MultiplyRGBA(new Color(180, 180, 180));
-		Vector2 position = vector;
-
-		if (Flashing) {
-			float ratio = Utils.Turn01ToCyclic010(((Interface.modConfig.UpdateCount % flashRate) / (float)flashRate)) * 0.5f + 0.5f;
-			panelColor = Color.Lerp(panelColor, Color.White, MathF.Pow(ratio, 2));
-		}
-
-		DrawPanel2(spriteBatch, position, TextureAssets.SettingsPanel.Value, settingsWidth, dimensions.Height, panelColor);
-
-		if (DrawLabel) {
-			position.X += 8f;
-			position.Y += 8f;
-
-			string label = TextDisplayFunction();
-			if (ReloadRequired && ValueChanged) {
-				label += " - [c/FF0000:" + Language.GetTextValue("tModLoader.ModReloadRequired") + "]";
-			}
-
-			// TODO: Support chat tag hover?
-			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, label, position, color, 0f, Vector2.Zero, baseScale, settingsWidth, 2f);
-		}
-
-		if (IsMouseHovering && TooltipFunction != null) {
-			string tooltip = TooltipFunction();
-
-			// TODO - Add line for default value?
-
-			if (ShowReloadRequiredTooltip) {
-				tooltip += string.IsNullOrEmpty(tooltip) ? "" : "\n";
-				tooltip += $"[c/{Color.Orange.Hex3()}:" + Language.GetTextValue("tModLoader.ModReloadRequiredMemberTooltip") + "]";
-			}
-
-			UIModConfig.Tooltip = tooltip;
-		}
-	}
-
 	public override void MouseOver(UIMouseEvent evt)
 	{
 		base.MouseOver(evt);
 		Flashing = false;
 	}
 
-	public static void DrawPanel2(SpriteBatch spriteBatch, Vector2 position, Texture2D texture, float width, float height, Color color)
+	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
-		// left edge
-		//	spriteBatch.Draw(texture, position, new Rectangle(0, 0, 2, texture.Height), color);
-		//	spriteBatch.Draw(texture, new Vector2(position.X + 2, position.Y), new Rectangle(2, 0, texture.Width - 4, texture.Height), color, 0f, Vector2.Zero, new Vector2((width - 4) / (texture.Width - 4), (height - 4) / (texture.Height - 4)), SpriteEffects.None, 0f);
-		//	spriteBatch.Draw(texture, new Vector2(position.X + width - 2, position.Y), new Rectangle(texture.Width - 2, 0, 2, texture.Height), color);
+		CalculatedStyle dimensions = GetDimensions();
 
-		//width and height include border
-		spriteBatch.Draw(texture, position + new Vector2(0, 2), new Rectangle(0, 2, 1, 1), color, 0, Vector2.Zero, new Vector2(2, height - 4), SpriteEffects.None, 0f);
-		spriteBatch.Draw(texture, position + new Vector2(width - 2, 2), new Rectangle(0, 2, 1, 1), color, 0, Vector2.Zero, new Vector2(2, height - 4), SpriteEffects.None, 0f);
-		spriteBatch.Draw(texture, position + new Vector2(2, 0), new Rectangle(2, 0, 1, 1), color, 0, Vector2.Zero, new Vector2(width - 4, 2), SpriteEffects.None, 0f);
-		spriteBatch.Draw(texture, position + new Vector2(2, height - 2), new Rectangle(2, 0, 1, 1), color, 0, Vector2.Zero, new Vector2(width - 4, 2), SpriteEffects.None, 0f);
+		DrawBackgroundPanel(spriteBatch, dimensions.ToRectangle(), GetBackgroundPanelColor());
 
-		spriteBatch.Draw(texture, position + new Vector2(2, 2), new Rectangle(2, 2, 1, 1), color, 0, Vector2.Zero, new Vector2(width - 4, (height - 4) / 2), SpriteEffects.None, 0f);
-		spriteBatch.Draw(texture, position + new Vector2(2, 2 + ((height - 4) / 2)), new Rectangle(2, 16, 1, 1), color, 0, Vector2.Zero, new Vector2(width - 4, (height - 4) / 2), SpriteEffects.None, 0f);
+		string label = GetLabel();
+		if (!string.IsNullOrEmpty(label)) {
+			var (labelTextColor, labelShadowColor) = GetLabelColor();
+			DrawLabel(spriteBatch, label, labelTextColor, labelShadowColor);
+		}
+
+		if (!IsMouseHovering)
+			return;
+
+		string tooltip = GetTooltip();
+		if (string.IsNullOrEmpty(tooltip))
+			return;
+
+		UIModConfig.Tooltip = tooltip;
+	}
+
+	protected virtual Color GetBackgroundPanelColor()
+	{
+		Color panelColor = backgroundColor;
+
+		if (Flashing) {
+			float ratio = Utils.Turn01ToCyclic010(((Interface.modConfig.UpdateCount % flashRate) / (float)flashRate)) * 0.5f + 0.5f;
+			panelColor = Color.Lerp(panelColor, Color.White, MathF.Pow(ratio, 2));
+		}
+
+		if (!IsMouseHovering)
+			panelColor = panelColor.MultiplyRGBA(new Color(180, 180, 180));
+
+		return panelColor;
+	}
+
+	protected virtual (Color, Color) GetLabelColor()
+	{
+		return (Field.MemberInfo.CanWrite ? Color.White : Color.Gray, Color.Black);
+	}
+
+	protected virtual void DrawBackgroundPanel(SpriteBatch sb, Rectangle dims, Color color)
+	{
+		Texture2D texture = UICommon.ConfigPanelTexture.Value;
+		int highlightSize = dims.Height / 2;
+
+		// Left and right
+		sb.Draw(texture, new Rectangle(dims.X, dims.Y + 2, 2, dims.Height - 4), new Rectangle(0, 2, 1, 1), color);
+		sb.Draw(texture, new Rectangle(dims.X + dims.Width - 2, dims.Y + 2, 2, dims.Height - 4), new Rectangle(0, 2, 1, 1), color);
+
+		// Up and down
+		sb.Draw(texture, new Rectangle(dims.X + 2, dims.Y, dims.Width - 4, 2), new Rectangle(2, 0, 1, 1), color);
+		sb.Draw(texture, new Rectangle(dims.X + 2, dims.Y + dims.Height - 2, dims.Width - 4, 2), new Rectangle(2, 0, 1, 1), color);
+
+		// Inner panel
+		sb.Draw(texture, new Rectangle(dims.X + 2, dims.Y + 2, dims.Width - 4, highlightSize - 2), new Rectangle(2, 2, 1, 1), color);
+		sb.Draw(texture, new Rectangle(dims.X + 2, dims.Y + highlightSize, dims.Width - 4, dims.Height - highlightSize - 2), new Rectangle(2, 16, 1, 1), color);
+	}
+
+	protected virtual void DrawLabel(SpriteBatch sb, string label, Color textColor, Color shadowColor)
+	{
+		CalculatedStyle dimensions = GetDimensions();
+		Vector2 textPos = dimensions.Position();
+		// TODO: better alignment?
+		textPos.X += 8f;
+		textPos.Y += 8f;
+
+		// TODO: bigger text?
+
+		// TODO: Support chat tag hover?
+		ChatManager.DrawColorCodedStringWithShadow(sb, FontAssets.ItemStack.Value, label, textPos, textColor, shadowColor, 0f, Vector2.Zero, new Vector2(0.8f), dimensions.Width, 2f);
+	}
+
+	// TODO: just override these in child classes instead of using a weird function that can be set
+
+	protected virtual string GetLabel()
+	{
+		string label = LabelFunction();
+
+		if (ReloadRequired && ValueChanged) {
+			label += " - [c/FF0000:" + Language.GetTextValue("tModLoader.ModReloadRequired") + "]";
+		}
+
+		return label;
+	}
+
+	protected virtual string GetTooltip()
+	{
+		return TooltipFunction();
 	}
 }

@@ -28,7 +28,7 @@ internal abstract class DefinitionElement<T> : ConfigElement<T> where T : Entity
 	public override void OnBind()
 	{
 		base.OnBind();
-		TextDisplayFunction = () => Label + ": " + OptionChoice.Tooltip;
+		LabelFunction = () => Label + ": " + OptionChoice.Tooltip;
 		/* TODO: fix if (List != null) {
 			TextDisplayFunction = () => Index + 1 + ": " + OptionChoice.Tooltip;
 		}*/

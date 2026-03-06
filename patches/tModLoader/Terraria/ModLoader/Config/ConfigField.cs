@@ -8,6 +8,11 @@ namespace Terraria.ModLoader.Config;
 /// <br/><br/>
 /// Contains methods to get and set the value of a config field.
 /// </summary>
+// TODO: is there a real need for parent to be null?
+// TODO: what about passing in get/set functions? that would allow much more customization, and pushes the responsibility of ensuring that get/set works to whatever UI is creating the fields
+// TODO: also with the config param, there is reason to retrieve the a config field value from different configs of the same type, so maybe it should be passed into Value somehow?
+// - maybe just make value get and set call GetValue and SetValue functions, since that means that you can pass in an override config
+// - or just always pass in a config so don't have to store the config field every field
 public class ConfigField(ModConfig config, PropertyFieldWrapper memberInfo, ConfigField parent = null, int index = -1)
 {
 	// The config and the field

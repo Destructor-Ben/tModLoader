@@ -419,6 +419,20 @@ public static class ConfigManager
 		return fields.Select(x => new PropertyFieldWrapper(x)).Concat(properties.Select(x => new PropertyFieldWrapper(x)));
 	}
 
+	public static IEnumerable<ConfigField> GetConfigFields(ModConfig config, object? item)
+	{
+		// ReSharper disable once LoopCanBeConvertedToQuery
+		foreach (PropertyFieldWrapper memberInfo in GetFieldsAndProperties(item ?? config)) {
+			// Remember that JsonIgnoreAttribute exists twice, once in System.Text.Json and also in Newtonsoft.Json
+			// Don't let rider auto-import the namespace because it will cause bugs
+			if (Attribute.IsDefined(memberInfo.MemberInfo, typeof(JsonIgnoreAttribute)) && !Attribute.IsDefined(memberInfo.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute))) {
+				continue;
+			}
+
+			yield return new ConfigField(config, memberInfo);
+		}
+	}
+
 	/// <summary>
 	/// Creates a clone of the provided ModConfig. This clone can be modified independently of the active config.
 	/// <br/><br/> Mods can use this method to create a clone of the active config, then use it to populate a UI. The player can use the UI to make several changes then save them all at once.

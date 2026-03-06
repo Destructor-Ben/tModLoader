@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
 using Terraria.UI;
@@ -10,19 +10,14 @@ namespace Terraria.ModLoader.UI.Config;
 /// <summary>
 /// Contains various utilities to deal with config elements, such as creating them, handling headers, and registering custom config elements.
 /// </summary>
+// TODO: perhaps make ConfigManager partial and make this file ConfigManager.ConfigElements.cs?
 public static class ConfigElementHandler
 {
 	public static List<UIElement> GetConfigElements(ModConfig config, object obj = null)
 	{
 		var elements = new List<UIElement>();
 
-		// ReSharper disable once LoopCanBePartlyConvertedToQuery
-		foreach (PropertyFieldWrapper memberInfo in ConfigManager.GetFieldsAndProperties(obj ?? config)) {
-			if (Attribute.IsDefined(memberInfo.MemberInfo, typeof(JsonIgnoreAttribute)) && !Attribute.IsDefined(memberInfo.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute)))
-				continue;
-
-			var field = new ConfigField(config, memberInfo);
-
+		foreach (ConfigField field in ConfigManager.GetConfigFields(config, obj)) {
 			if (TryGetHeader(field, out var header)) {
 				elements.Add(header);
 			}
@@ -175,7 +170,9 @@ public static class ConfigElementHandler
 
 		// Absolute backup
 		// TODO: handle properly
-		configElement ??= new PlaceholderElement(Language.GetText($"{field.MemberInfo.Name} not handled yet ({field.MemberInfo.Type.Name})"));
+		configElement ??= new PlaceholderElement {
+			Label = Language.GetText($"{field.MemberInfo.Name} not handled yet ({field.MemberInfo.Type.Name})"),
+		};
 
 		configElement.Bind(field);
 		return configElement;
@@ -192,6 +189,8 @@ public static class ConfigElementHandler
 
 		// TODO: blend with the panel color that the config specifies
 		// - but what if inside an element? it should inherit then
+		// TODO: this should have a HeaderElement class that uses UIHeaderElement as a child, since we will want to inherit color
+		// - also will want to make them collapsible
 		header = new UIHeaderElement(headerAttribute.Header, UIHeaderElement.BlendColor(UICommon.DefaultUIBlue));
 		return true;
 	}
