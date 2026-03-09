@@ -3,6 +3,7 @@ using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using ReLogic.Graphics;
 using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
@@ -26,10 +27,16 @@ public abstract class ConfigElement : UIElement
 
 	public object Value {
 		get => Field.Value;
-		set => Field.Value = value;
+		set {
+			Field.Value = value;
+			Interface.modConfig.OnConfigModified();
+		}
 	}
 
 	public const float DefaultHeight = 30;
+	public const float DefaultTextScale = 0.8f;
+	public static readonly Color ValueTextColor = Color.White * 0.75f;
+	public static Asset<DynamicSpriteFont> DefaultFont => FontAssets.ItemStack;
 
 	private Color backgroundColor = UICommon.DefaultUIBlue; // TODO inherit parent object color?
 
@@ -138,6 +145,8 @@ public abstract class ConfigElement : UIElement
 		Flashing = false;
 	}
 
+	// TODO: provide basic functionality for rendering value/getting color of the value text?
+	// TODO: also add hooks for drawing stuff on the right, since things like the revert and restore buttons will take up space
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
 		CalculatedStyle dimensions = GetDimensions();
@@ -209,10 +218,21 @@ public abstract class ConfigElement : UIElement
 		// TODO: bigger text?
 
 		// TODO: Support chat tag hover?
-		ChatManager.DrawColorCodedStringWithShadow(sb, FontAssets.ItemStack.Value, label, textPos, textColor, shadowColor, 0f, Vector2.Zero, new Vector2(0.8f), dimensions.Width, 2f);
+		ChatManager.DrawColorCodedStringWithShadow(
+			sb,
+			DefaultFont.Value,
+			label,
+			textPos,
+			textColor,
+			shadowColor,
+			rotation: 0f,
+			origin: Vector2.Zero,
+			baseScale: new Vector2(DefaultTextScale),
+			maxWidth: dimensions.Width
+		);
 	}
 
-	// TODO: just override these in child classes instead of using a weird function that can be set
+	// TODO: just override these in child classes instead of using a weird function that can be set?
 
 	protected virtual string GetLabel()
 	{

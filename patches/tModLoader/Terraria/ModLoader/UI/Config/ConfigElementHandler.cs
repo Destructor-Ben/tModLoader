@@ -13,6 +13,7 @@ namespace Terraria.ModLoader.UI.Config;
 // TODO: perhaps make ConfigManager partial and make this file ConfigManager.ConfigElements.cs?
 public static class ConfigElementHandler
 {
+	// TODO: in future, return a list of ConfigElement
 	public static List<UIElement> GetConfigElements(ModConfig config, object obj = null)
 	{
 		var elements = new List<UIElement>();
@@ -31,8 +32,8 @@ public static class ConfigElementHandler
 	public static ConfigElement GetConfigElement(ConfigField field)
 	{
 		// TODO: priorities:
+		// - custom UI from the ModConfig -> provide a hook to override the ConfigElement
 		// - custom UI from the attribute
-		// - custom UI from the mod registering a custom config element -> should ModConfig have a method to set allow setting this?
 		// - default UI
 		return TryGetDefaultConfigElement(field);
 	}
@@ -42,14 +43,6 @@ public static class ConfigElementHandler
 		ConfigElement configElement = null;
 
 		/* TODO: bring all of this back
-		//public static Tuple<UIElement, UIElement> WrapIt(UIElement uiParent, ref int top, ConfigField field, ConfigField parent, int order, Type arrayType = null, int index = -1)
-		int elementHeight;
-		Type type = field.MemberInfo.Type;
-
-		if (arrayType != null) {
-			type = arrayType;
-		}
-
 		// TODO: Other common structs? -- Rectangle, Point
 		var customUI = field.GetAttribute<CustomModConfigItemAttribute>();
 
@@ -167,6 +160,12 @@ public static class ConfigElementHandler
 
 			//object subitem = memberInfo.GetValue(item);
 		}*/
+
+		Type fieldType = field.MemberInfo.Type;
+
+		if (fieldType == typeof(bool)) {
+			configElement = new BooleanElement();
+		}
 
 		// Absolute backup
 		// TODO: handle properly

@@ -305,6 +305,7 @@ public class UIModConfig : UIState, IHaveBackButtonCommand
 	}
 
 	// TODO: strange bugs with reference types that default to null (such as strings) when backspacing themselves
+	// TODO: perhaps queue whether there is an update (similar to refresh) to avoid spamming json serialization from things such as sliders if ConfigElement.Value is set a lot
 	public void OnConfigModified()
 	{
 		CheckSaveAndRestoreConditions();
