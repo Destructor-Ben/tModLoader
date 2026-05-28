@@ -35,6 +35,8 @@ public abstract class ConfigElement : UIElement
 
 	public const float DefaultHeight = 30;
 	public const float DefaultTextScale = 0.8f;
+	public const float PaddingH = 10f;
+	public const float PaddingV = 8f;
 	public static readonly Color ValueTextColor = Color.White * 0.75f;
 	public static Asset<DynamicSpriteFont> DefaultFont => FontAssets.ItemStack;
 

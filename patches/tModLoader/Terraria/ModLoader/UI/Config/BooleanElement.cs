@@ -26,13 +26,13 @@ internal class BooleanElement : ConfigElement<bool>
 
 		CalculatedStyle dimensions = GetDimensions();
 		var sourceRectangle = new Rectangle(Value ? ((toggleTexture.Width() - 2) / 2 + 2) : 0, 0, (toggleTexture.Width() - 2) / 2, toggleTexture.Height());
-		var drawPosition = new Vector2(dimensions.X + dimensions.Width - sourceRectangle.Width - 10f, dimensions.Y + 8f);
+		var drawPosition = new Vector2(dimensions.X + dimensions.Width - sourceRectangle.Width - PaddingH, dimensions.Y + 8f);
 		spriteBatch.Draw(toggleTexture.Value, drawPosition, sourceRectangle, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
 
 		string text = Value ? Lang.menu[126].Value : Lang.menu[124].Value;
 		var textScale = new Vector2(DefaultTextScale);
 		Vector2 textSize = ChatManager.GetStringSize(DefaultFont.Value, text, textScale);
-		Vector2 valuePos = dimensions.Position() + (dimensions.Width - textSize.X - 30) * Vector2.UnitX + 8f * Vector2.UnitY;
+		Vector2 valuePos = dimensions.Position() + (dimensions.Width - textSize.X - drawPosition.X) * Vector2.UnitX + 8f * Vector2.UnitY;
 		ChatManager.DrawColorCodedStringWithShadow(
 			spriteBatch,
 			DefaultFont.Value,
