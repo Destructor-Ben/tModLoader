@@ -646,12 +646,7 @@ internal class ReferenceDefaultsPreservingResolver : DefaultContractResolver
 	{
 		IList<JsonProperty> props = base.CreateProperties(type, memberSerialization);
 
-		if (!type.IsClass) {
-			return props;
-		}
-
 		ConstructorInfo? ctor = type.GetConstructor(Type.EmptyTypes);
-
 		if (ctor == null) {
 			return props;
 		}
@@ -663,10 +658,15 @@ internal class ReferenceDefaultsPreservingResolver : DefaultContractResolver
 				continue;
 
 			if (prop.PropertyType.IsValueType) {
+				// TODO: test if there is a DefaultValue attribute, and if there is, then ignore this code
+				prop.DefaultValue = prop.ValueProvider!.GetValue(referenceInstance);
+
 				continue;
 			}
 
 			// var a = type.GetMember(prop.PropertyName);
+			if (!type.IsClass)
+				continue;
 
 			if (prop.Writable) {
 				if (prop.PropertyType.GetConstructor(Type.EmptyTypes) != null) {
