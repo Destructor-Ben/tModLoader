@@ -11,3 +11,19 @@
  			Item inv = recipe.requiredItem[j];
  			if (inv.type == 0) {
  				UILinkPointNavigator.Shortcuts.CRAFT_CurrentIngredientsCount = j + 1;
+@@ -230,12 +_,14 @@
+ 			_lastFilter = null;
+ 
+ 		UILinkPointNavigator.SetPosition(gamepadPointId, new Vector2(craftX, craftY));
++		/*
+-		if (numAvailableRecipes == 0 && !AnyAdvancedGridVisible) {
++		if (numAvailableRecipes == 0 &&  !AnyAdvancedGridVisible) {
+ 			if (Main.PipsCurrentPage == Main.PipPage.Recipes)
+ 				Main.PipsUseGrid = false;
+ 
+ 			return;
+ 		}
++		*/
+ 
+ 		bool flag = mouseX > craftX - 15 && mouseX < craftX + 15 && mouseY > craftY - 15 && mouseY < craftY + 15 && !PlayerInput.IgnoreMouseInterface;
+ 		if (Main.PipsCurrentPage == Main.PipPage.Recipes)

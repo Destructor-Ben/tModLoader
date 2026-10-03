@@ -1,13 +1,22 @@
 --- src/TerrariaNetCore/Terraria/GameContent/UI/NewCraftingUI.cs
 +++ src/tModLoader/Terraria/GameContent/UI/NewCraftingUI.cs
-@@ -12,6 +_,7 @@
+@@ -12,12 +_,16 @@
  using Terraria.ID;
  using Terraria.Localization;
  using Terraria.Map;
 +using Terraria.ModLoader;
++using Terraria.ModLoader.UI;
  using Terraria.UI;
  using Terraria.UI.Chat;
  using Terraria.UI.Gamepad;
+ 
+ namespace Terraria.GameContent.UI;
+ 
++// TODO: allow selecting the ingredients of a recipe and focusing on the recipe for them (if it exists)
++// TODO: allow displaying a crafting tree
+ public class NewCraftingUI : UIState
+ {
+ 	private class RecipeEntry
 @@ -125,7 +_,7 @@
  		public CraftStationRecipeFilter(int tileType, int tileStyle)
  			: base(tileType, tileStyle)
@@ -17,6 +26,64 @@
  			AcceptTileType(tileType);
  		}
  
+@@ -195,6 +_,9 @@
+ 	private Item _resetForGuideItem;
+ 	private UIGamepadHelper _helper;
+ 
++	private bool _showAllRecipes = false;
++	private bool ShowingAllRecipes => !Main.InGuideCraftMenu && _showAllRecipes;
++
+ 	public static bool Visible => _ui.CurrentState != null;
+ 
+ 	private RecipeEntry SelectedEntry {
+@@ -329,6 +_,39 @@
+ 
+ 		uICreativeItemsInfiniteFilteringOptions.OnClickingOption += ResetRecipes;
+ 		totalContainer.Append(uICreativeItemsInfiniteFilteringOptions);
++
++		AddAllRecipesToggle(uIPanel);
++	}
++
++	private UIImageButton _toggleAllRecipes;
++
++	private void AddAllRecipesToggle(UIPanel uIPanel)
++	{
++		// TODO: make a dedicated texture (and hover texture)	 for this and tint it the correct colour
++		_toggleAllRecipes = new UIImageButton(Main.Assets.Request<Texture2D>("Images/UI/ButtonBacking")) {
++			HAlign = 1f,
++			Top = { Pixels = -2 },
++		};
++		_toggleAllRecipes.SetHoverImage(Main.Assets.Request<Texture2D>("Images/UI/Bestiary/Button_Search_Border"));
++		_toggleAllRecipes.SetVisibility(1f, 1f);
++
++		_toggleAllRecipes.OnLeftClick += (_, _) => {
++			_showAllRecipes = !_showAllRecipes;
++			SoundEngine.PlaySound(SoundID.MenuTick);
++			ResetRecipes();
++		};
++
++		uIPanel.Append(_toggleAllRecipes);
++
++		UpdateSearchBarFromAllRecipesToggle();
++	}
++
++	private void UpdateSearchBarFromAllRecipesToggle()
++	{
++		float searchBarPadding = 5;
++		float searchBarShift = searchBarPadding + _toggleAllRecipes.GetDimensions().Width;
++		_searchBar.Left.Pixels = -searchBarShift;
++		_searchBar.Width.Pixels -= searchBarShift;
+ 	}
+ 
+ 	public override void Draw(SpriteBatch spriteBatch)
+@@ -358,6 +_,7 @@
+ 			_text.SetText(text);
+ 			_text.Recalculate();
+ 			_searchBar.Width = new StyleDimension(0f - _text.GetOuterDimensions().Width - 10f, 1f);
++			UpdateSearchBarFromAllRecipesToggle();
+ 			_searchBar.Recalculate();
+ 		}
+ 	}
 @@ -392,8 +_,11 @@
  				HandleCraftSlot(recipeEntry, 42);
  
@@ -43,6 +110,47 @@
  			numLines++;
  		}
  	}
+@@ -511,6 +_,9 @@
+ 		if (Main.InGuideCraftMenu && Main.guideItem != _resetForGuideItem)
+ 			ResetRecipes();
+ 
++		if (ShowingAllRecipes)
++			ResetRecipes();
++
+ 		foreach (RecipeEntry recipe in _recipes) {
+ 			recipe.availableIndex = -1;
+ 		}
+@@ -535,6 +_,21 @@
+ 			recipeEntry.availableIndex = i;
+ 		}
+ 
++		if (ShowingAllRecipes)
++		{
++			for (int i = 0; i < Recipe.numRecipes; i++) {
++				RecipeEntry recipeEntry = _recipeListLookup[i];
++				if (recipeEntry == null) {
++					recipeEntry = (_recipeListLookup[i] = new RecipeEntry(i));
++					_recipes.Add(recipeEntry);
++					if (FitsFilter(recipeEntry.Recipe)) {
++						recipeEntry.gridIndex = _filteredRecipes.Count;
++						_filteredRecipes.Add(recipeEntry);
++					}
++				}
++			}
++		}
++
+ 		if (SelectedEntry == null)
+ 			_selectedRecipeIndex = null;
+ 		else if (_filter != null && !_filter.Accepts(SelectedEntry.Recipe))
+@@ -542,7 +_,7 @@
+ 		else if (SelectedEntry.Available)
+ 			Main.focusRecipe = SelectedEntry.availableIndex;
+ 
+-		if (_itemGrid.Count != _filteredRecipes.Count || (flag && _filteredRecipes.Count > 0))
++		if (_itemGrid.Count != _filteredRecipes.Count || (flag && _filteredRecipes.Count > 0) || ShowingAllRecipes)
+ 			_itemGrid.SetContentsToShow(_filteredRecipes);
+ 	}
+ 
 @@ -642,7 +_,8 @@
  		UILinkPoint rightSide = ((materialCount == 0) ? null : uILinkPage.LinkMap[20001]);
  		UILinkPoint uILinkPoint10 = ((materialCount == 0) ? null : uILinkPage.LinkMap[20001 + materialCount - 1]);
@@ -53,3 +161,15 @@
  			UILinkPoint uILinkPoint11 = uILinkPage.LinkMap[20001 + j];
  			_helper.PairLeftRight(uILinkPoint11, uILinkPage.LinkMap[20001 + j + 1]);
  			uILinkPoint11.Down = uILinkPoint2?.Down ?? (-1);
+@@ -769,6 +_,11 @@
+ 
+ 	public override void OnActivate()
+ 	{
++		// TODO: these lines are temp
++		var uIPanel = _toggleAllRecipes.Parent;
++		_toggleAllRecipes.Remove();
++		AddAllRecipesToggle(uIPanel as UIPanel);
++
+ 		_instance._openedWithoutFilter = _filter == null;
+ 		_selectedRecipeIndex = ((Main.numAvailableRecipes < 0) ? null : new int?(Main.availableRecipe[Main.focusRecipe]));
+ 		ResetRecipes();
